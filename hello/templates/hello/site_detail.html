@@ -1,0 +1,9 @@
+</h1>{{ plc_site.site_name }}</h1>
+<ul>
+    <li><b>Site ID: </b>{{ plc_site.id }}</li>
+    <li><b>URL: </b>{{ plc_site.site_url }}</li>
+    <li><b>Login base: </b>{{ plc_site.site_login_base }}</li>
+    <li><b>Longitude: </b>{{ plc_site.site_longitude }}</li>
+    <li><b>Latitude: </b>{{ plc_site.site_latitude }}</li>
+</ul>
+<a href="{% url 'hello:sites' %}">Return to the list</a>

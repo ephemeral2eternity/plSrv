@@ -1,0 +1,12 @@
+{% if site_num %}
+    <h1>There are totally {{ site_num }} PlanetLab sites  available!</h1>
+{% endif %}
+{% if plc_sites %}
+    <ul>
+    {% for site in plc_sites %}
+        <li><a href="/hello/site/{{ site.id }}/">{{ site.site_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No planetlab sites are available.</p>
+{% endif %}

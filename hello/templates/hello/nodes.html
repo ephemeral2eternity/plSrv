@@ -1,0 +1,12 @@
+{% if node_num %}
+    <h1>There are totally {{ node_num }} PlanetLab nodes available!</h1>
+{% endif %}
+{% if plc_nodes %}
+    <ul>
+    {% for node in plc_nodes %}
+        <li><a href="/hello/node/{{ node.id }}/">{{ node.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No planetlab nodes are available.</p>
+{% endif %}
