@@ -22,13 +22,15 @@ def addnode(request):
 		print(plc_node_id)
 		plc_node_name = request.POST.get("hostname", "")
 		plc_node_site_id = int(request.POST.get("site_id", ""))
+		plc_node_os = request.POST.get("node_os", "")
+		plc_node_python = request.POST.get("node_python", "")
 		plc_node_site = PLCSite.objects.get(pk=plc_node_site_id)
 		#print(plc_node_site)
 		plc_node_site_name = plc_node_site.site_name
 		#print(plc_node_site_name)
 		plc_node_type = request.POST.get("node_type", "")
 		#print(plc_node_type)
-		plc_node = PLCNode(id=plc_node_id, name=plc_node_name, site_id=plc_node_site_id, site=plc_node_site_name, node_type=plc_node_type)
+		plc_node = PLCNode(id=plc_node_id, name=plc_node_name, site_id=plc_node_site_id, site=plc_node_site_name, node_type=plc_node_type, node_os=plc_node_os, node_python=plc_node_python)
 		plc_node.save()
 		#print("Successfully save the node!")
 	elif request.method == "GET":
@@ -67,9 +69,11 @@ def addsite(request):
 def site_detail(request, site_id):
 	try:
 		plc_site = PLCSite.objects.get(id=site_id)
+		cur_nodes = PLCNode.objects.filter(site_id=site_id)
 	except PLCSite.DoesNotExist:
 		raise Http404
-	return render(request, 'hello/site_detail.html', {'plc_site' : plc_site})
+	return render(request, 'hello/site_detail.html', {'plc_site' : plc_site,
+							  'cur_nodes' : cur_nodes,})
 
 def node_detail(request, node_id):
 	try:

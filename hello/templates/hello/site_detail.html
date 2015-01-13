@@ -5,5 +5,17 @@
     <li><b>Login base: </b>{{ plc_site.site_login_base }}</li>
     <li><b>Longitude: </b>{{ plc_site.site_longitude }}</li>
     <li><b>Latitude: </b>{{ plc_site.site_latitude }}</li>
+    <li><b>Available Nodes on the site: </b>
+	<ul>
+{% if cur_nodes %}
+{% for node in cur_nodes %}
+        <li><a href="/hello/node/{{ node.id }}/">{{ node.name }}</a></li>
+{% endfor %}
+{% else %}
+    	<p>No planetlab sites are available.</p>
+{% endif %}
+	</ul>
+    </li>
 </ul>
+
 <a href="{% url 'hello:sites' %}">Return to the list</a>

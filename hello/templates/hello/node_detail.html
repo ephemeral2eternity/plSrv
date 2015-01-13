@@ -4,5 +4,7 @@
     <li><b>Site ID: </b>{{ plc_node.site_id }}</li>
     <li><b>Site Name: </b><a href="/hello/site/{{ plc_node.site_id }}/">{{ plc_node.site }}</a></li>
     <li><b>Node Type: </b>{{ plc_node.node_type }}</li>
+    <li><b>Node OS Version: </b>{{ plc_node.node_os }}</li>
+    <li><b>Node Python Version: </b>{{ plc_node.node_python }}</li>
 </ul>
 <a href="{% url 'hello:nodes' %}">Return to the list</a>

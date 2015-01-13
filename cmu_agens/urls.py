@@ -5,5 +5,6 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'cmu_agens.views.home', name='home'),
     url(r'^hello/', include('hello.urls', namespace='hello')),
+    url(r'^overlay/', include('overlay.urls', namespace='overlay')),
     url(r'^admin/', include(admin.site.urls)),
 )

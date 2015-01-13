@@ -1,0 +1,17 @@
+{% if node_num %}
+    <h1>There are totally {{ node_num }} cache agents available on Google Cloud!</h1>
+{% endif %}
+{% if nodes %}
+    <ul>
+    {% for node in nodes %}
+        <li><a href="http://{{ node.ip }}:8615/overlay?query">{{ node.name }}</a></li>
+	<ul>
+		<li><b>Cache Agent IP:</b>{{ node.ip }}</li>
+		<li><b>Cache Agent Zone:</b>{{ node.zone }}</li>
+		<li><b>Cache Agent Type:</b>{{ node.type }}</li>
+	</ul>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>There are no cache agents available.</p>
+{% endif %}

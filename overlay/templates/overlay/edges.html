@@ -1,0 +1,16 @@
+{% if edge_num %}
+<h1>There are {{ edge_num}} edges!</h1>
+{% endif %}
+{% if edges %}
+    <ul>
+    {% for e in edges %}
+        <li><b>Edge ID : </b>{{ e.id }}</li>
+	<ul>
+		<li><b>Edge Src: </b>{{ e.src }}</li>
+		<li><b>Edge Dst: </b>{{ e.dst }}</li>
+	</ul>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>There are no edges between cache agents.</p>
+{% endif %}
