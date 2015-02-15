@@ -66,3 +66,12 @@ def node(request):
 	response = HttpResponse(str(node_ips))
 	response['Params'] = json.dumps(node_ips)
 	return response
+
+def zone(request):
+	nodes = Node.objects.all()
+	node_zones = {}
+	for node in nodes:
+		node_zones[node.name] = node.zone
+	response = HttpResponse(str(node_zones))
+	response['Params'] = json.dumps(node_zones)
+	return response

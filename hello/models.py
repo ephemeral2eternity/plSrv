@@ -19,7 +19,9 @@ class PLCNode(models.Model):
 	name = models.CharField(max_length=200)
 	site = models.CharField(max_length=100)
 	node_type = models.CharField(max_length=200)
+	node_ip = models.CharField(max_length=20, default="0.0.0.0")
 	node_os = models.CharField(max_length=200, default="unknown")
+	node_as = models.CharField(max_length=500, default="unknown")
 	node_python = models.CharField(max_length=200, default="unknown")
 	def __str__(self):
 		return self.name

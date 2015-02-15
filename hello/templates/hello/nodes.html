@@ -4,7 +4,7 @@
 {% if plc_nodes %}
     <ul>
     {% for node in plc_nodes %}
-        <li><a href="/hello/node/{{ node.id }}/">{{ node.name }}</a>, {{ node.node_os }}, {{ node.node_python }}</li>
+        <li><a href="/hello/node/{{ node.id }}/">{{ node.name }}</a>, {{ node.node_ip }}, {{ node.node_os }}, {{ node.node_python }}</li>
     {% endfor %}
     </ul>
 {% else %}

@@ -3,6 +3,7 @@ from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.template import RequestContext, loader
 from django.http import HttpResponse
+import subprocess
 from hello.models import PLCSite, PLCNode, GeoSite
 from djgeojson.fields import PointField
 #from djgeojson.serializers import Serializer as GeoJSONSerializer
@@ -24,13 +25,16 @@ def addnode(request):
 		plc_node_site_id = int(request.POST.get("site_id", ""))
 		plc_node_os = request.POST.get("node_os", "")
 		plc_node_python = request.POST.get("node_python", "")
+		plc_node_ip = request.POST.get("node_ip", "")
 		plc_node_site = PLCSite.objects.get(pk=plc_node_site_id)
+		p = subprocess.Popen("whois -h whois.cymru.com \" -v " + plc_node_ip + "\"", stdout=subprocess.PIPE, shell=True)
+		plc_node_as = p.communicate()[0]
 		#print(plc_node_site)
 		plc_node_site_name = plc_node_site.site_name
 		#print(plc_node_site_name)
 		plc_node_type = request.POST.get("node_type", "")
 		#print(plc_node_type)
-		plc_node = PLCNode(id=plc_node_id, name=plc_node_name, site_id=plc_node_site_id, site=plc_node_site_name, node_type=plc_node_type, node_os=plc_node_os, node_python=plc_node_python)
+		plc_node = PLCNode(id=plc_node_id, node_ip=plc_node_ip, name=plc_node_name, site_id=plc_node_site_id, site=plc_node_site_name, node_type=plc_node_type, node_os=plc_node_os, node_python=plc_node_python, node_as=plc_node_as)
 		plc_node.save()
 		#print("Successfully save the node!")
 	elif request.method == "GET":
@@ -42,6 +46,16 @@ def addnode(request):
 			'node_num':node_num,
 		})
 		return HttpResponse(template.render(context))
+
+@csrf_exempt
+def asLookup(request):
+	print("Call asLookup function in hello/views.py")
+	nodes = PLCNode.objects.all()
+	template = loader.get_template('hello/ases.html')
+	context = RequestContext(request, {
+		'nodes' : nodes,
+	})
+	return HttpResponse(template.render(context))
 
 @csrf_exempt
 def addsite(request):

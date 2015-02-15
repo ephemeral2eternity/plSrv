@@ -1,0 +1,13 @@
+{% if node_num %}
+    <h1>There are totally {{ node_num }} Nodes available!</h1>
+{% endif %}
+{% if nodes %}
+    <ul>
+    <li>Name, gc01, az01, aws01 </li>
+    {% for node in nodes %}
+        <li>{{ node.name }}, {{ node.gc01 }}, {{ node.az01 }}, {{ node.aws01 }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No node rtts are available.</p>
+{% endif %}

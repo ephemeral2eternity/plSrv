@@ -1,0 +1,10 @@
+{% if nodes %}
+    <ul>
+    {% for node in nodes %}
+        <li><a href="/hello/node/{{ node.id }}/">{{ node.name }}</a></li>
+	<p>{{ node.node_as|linebreaksbr }}</p>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No planetlab nodes are available.</p>
+{% endif %}
