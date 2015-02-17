@@ -11,6 +11,9 @@ from overlay.lib.get_cache_agents import *
 
 # Create your views here.
 def index(request):
+	## Delete all exisitng nodes and rescan available nodes
+	existing_nodes = Node.objects.all()
+	existing_nodes.delete()
 	gce_nodes = get_cache_agents()
 	node_ips = get_cache_agent_ips()
 	prev_edges = Edge.objects.all()
