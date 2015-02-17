@@ -19,10 +19,10 @@ def index(request):
 		node_id = int(n['name'].split('-')[1])
 		node_name = n['name']
 		node_ip = n['ip']
-		r = requests.get("http://" + node_ip + ":8615/overlay?query")
-		peer_str = r.headers['Params']
+		r = requests.get("http://" + node_ip + ":8615/overlay/query/")
+		peer_str = r.headers['agens-peers']
 		print(peer_str)
-		peers = peer_str.splitlines()
+		peers = peer_str.split(',')
 		for peer in peers:
 			peer_id = int(peer.split('-')[1])
 			print("(", node_id, ", ", peer_id, ")")
