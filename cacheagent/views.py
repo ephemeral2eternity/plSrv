@@ -44,7 +44,7 @@ def dump(request):
 		cache_agents[agent.client] = agent.cache_agent
 
 	cur_file_path = os.path.realpath(__file__)
-        cur_path, cur_file_name = ntpath.split(cur_file_path)
+	cur_path, cur_file_name = ntpath.split(cur_file_path)
 	ts = time.strftime('%m%d%H%M')
 
 	agents_file = cur_path + '/tmp/cache_agents_' + ts + '.json'
