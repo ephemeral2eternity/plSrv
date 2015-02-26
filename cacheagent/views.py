@@ -55,3 +55,9 @@ def dump(request):
 
 	all_agents.delete()
 	return HttpResponse('Successfully dump all cache agent info!')
+
+@csrf_exempt
+def delete(request):
+	all_agents = CacheAgent.objects.all()
+	all_agents.delete()
+	return HttpResponse('Successfully delete all cache agent info!')
