@@ -42,7 +42,14 @@ def index(request):
 		node_type = n['type']
 		node = Node(id=node_id, name=node_name, ip=node_ip, zone=node_zone, type=node_type)
 		node.save()
+	return query(request)
+
+@csrf_exempt
+def query(request):
 	nodes = Node.objects.all()
+	node_ips = {}
+	for node in nodes:
+		node_ips[node.name] = node.ip
 	node_num = nodes.count()
 	template = loader.get_template('overlay/index.html')
 	context = RequestContext(request, {

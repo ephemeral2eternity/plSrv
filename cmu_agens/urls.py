@@ -7,5 +7,6 @@ urlpatterns = patterns('',
     url(r'^hello/', include('hello.urls', namespace='hello')),
     url(r'^overlay/', include('overlay.urls', namespace='overlay')),
     url(r'^ping/', include('ping.urls', namespace='ping')),
+    url(r'^cacheagent/', include('cacheagent.urls', namespace='cacheagent')),
     url(r'^admin/', include(admin.site.urls)),
 )

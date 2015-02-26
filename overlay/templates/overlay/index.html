@@ -2,16 +2,32 @@
     <h1>There are totally {{ node_num }} cache agents available on Google Cloud!</h1>
 {% endif %}
 {% if nodes %}
-    <ul>
+<table style='width:100%'>
+    <tr>
+	<td><b>Cache Agent Name</b></td>
+	<td><b>Cache Agent IP</b></td>
+	<td><b>Cache Agent Zone</b></td>
+	<td><b>Cache Agent Type</b></td>
+	<td><b>Load Monitor Link</b></td>
+	<td><b>BW Monitor Link</b></td>
+	<td><b>QoE Monitor Link</b></td>
+	<td><b>Video Cache Table</b></td>
+	<td><b>Overlay Table</b></td>
+    </tr>
     {% for node in nodes %}
-        <li><a href="http://{{ node.ip }}:8615/overlay?query">{{ node.name }}</a></li>
-	<ul>
-		<li><b>Cache Agent IP:</b>{{ node.ip }}</li>
-		<li><b>Cache Agent Zone:</b>{{ node.zone }}</li>
-		<li><b>Cache Agent Type:</b>{{ node.type }}</li>
-	</ul>
+    <tr>
+        <td><a href="http://{{ node.ip }}:8615/overlay/query/">{{ node.name }}</a></td>
+	<td> {{ node.ip }} </td>
+	<td> {{ node.zone }} </td>
+	<td>{{ node.type }}</td>
+        <td><a href="http://{{ node.ip }}:8615/monitor/load/">{{ node.name }} Load</a></td>
+        <td><a href="http://{{ node.ip }}:8615/monitor/bw/">{{ node.name }} Outbound BW (Mbps)</a></td>
+        <td><a href="http://{{ node.ip }}:8615/qoe/query/">{{ node.name }} QoE Traces</a></td>
+        <td><a href="http://{{ node.ip }}:8615/video/query/">{{ node.name }} Cache Table</a></td>
+        <td><a href="http://{{ node.ip }}:8615/overlay/query/">{{ node.name }} Overlay Table</a></td>
+    </tr>
     {% endfor %}
-    </ul>
+</table>
 {% else %}
     <p>There are no cache agents available.</p>
 {% endif %}

@@ -1,0 +1,19 @@
+{% if clientNum %}
+    <h1>There are totally {{ clientNum }} clients reporting their cache agents!</h1>
+{% endif %}
+{% if agents %}
+<table style="width:100%">
+    <tr>
+	<td>Client Hostname</td>
+	<td>Connected Cache Agent</td>
+    </tr>
+    {% for node in agents %}
+	<tr>
+		<td>{{ node.client }}</td>
+		<td>{{ node.cache_agent }}</td>
+	</tr>
+    {% endfor %}
+</table>
+{% else %}
+    <p>No planetlab nodes are available.</p>
+{% endif %}

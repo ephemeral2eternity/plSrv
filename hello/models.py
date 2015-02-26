@@ -17,8 +17,8 @@ class PLCSite(models.Model):
 class PLCNode(models.Model):
 	site_id = models.IntegerField()
 	name = models.CharField(max_length=200)
-	site = models.CharField(max_length=100)
-	node_type = models.CharField(max_length=200)
+	site = models.CharField(max_length=100, default="unknown")
+	node_type = models.CharField(max_length=200, default="unknown")
 	node_ip = models.CharField(max_length=20, default="0.0.0.0")
 	node_os = models.CharField(max_length=200, default="unknown")
 	node_as = models.CharField(max_length=500, default="unknown")
