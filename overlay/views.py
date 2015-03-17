@@ -22,26 +22,30 @@ def index(request):
 		node_id = int(n['name'].split('-')[1])
 		node_name = n['name']
 		node_ip = n['ip']
-		r = requests.get("http://" + node_ip + ":8615/overlay/query/")
-		peer_str = r.headers['agens-peers']
-		print(peer_str)
-		peers = peer_str.split(',')
-		for peer in peers:
-			peer_id = int(peer.split('-')[1])
-			print("(", node_id, ", ", peer_id, ")")
-			if node_id < peer_id:
-				edge_id = node_id * 1000 + peer_id
-				print(edge_id)
-				edge = Edge(id=edge_id, src=node_name, dst=peer)
-			else:
-				edge_id = peer_id * 1000 + node_id
-				print(edge_id)
-				edge = Edge(id=edge_id, src=peer, dst=node_name)
-			edge.save()
-		node_zone = n['zone']
-		node_type = n['type']
-		node = Node(id=node_id, name=node_name, ip=node_ip, zone=node_zone, type=node_type)
-		node.save()
+		try:
+			r = requests.get("http://" + node_ip + ":8615/overlay/query/")
+			peer_str = r.headers['agens-peers']
+			print(peer_str)
+			if peer_str:
+				peers = peer_str.split(',')
+				for peer in peers:
+					peer_id = int(peer.split('-')[1])
+					print("(", node_id, ", ", peer_id, ")")
+					if node_id < peer_id:
+						edge_id = node_id * 1000 + peer_id
+						print(edge_id)
+						edge = Edge(id=edge_id, src=node_name, dst=peer)
+					else:
+						edge_id = peer_id * 1000 + node_id
+						print(edge_id)
+						edge = Edge(id=edge_id, src=peer, dst=node_name)
+					edge.save()
+			node_zone = n['zone']
+			node_type = n['type']
+			node = Node(id=node_id, name=node_name, ip=node_ip, zone=node_zone, type=node_type)
+			node.save()
+		except:
+			pass
 	return query(request)
 
 @csrf_exempt

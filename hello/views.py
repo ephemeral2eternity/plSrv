@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.template import RequestContext, loader
 from django.http import HttpResponse
 import subprocess
+import csv
 from hello.models import PLCSite, PLCNode, GeoSite
 from djgeojson.fields import PointField
 #from djgeojson.serializers import Serializer as GeoJSONSerializer
@@ -22,6 +23,8 @@ def addnode(request):
 		plc_node_id = int(request.POST.get("node_id", ""))
 		print(plc_node_id)
 		plc_node_name = request.POST.get("hostname", "")
+		plc_node_zone = request.POST.get("zone", "")
+		plc_node_region = request.POST.get("region", "")
 		plc_node_site_id = int(request.POST.get("site_id", ""))
 		plc_node_os = request.POST.get("node_os", "")
 		plc_node_python = request.POST.get("node_python", "")
@@ -34,7 +37,7 @@ def addnode(request):
 		#print(plc_node_site_name)
 		plc_node_type = request.POST.get("node_type", "")
 		#print(plc_node_type)
-		plc_node = PLCNode(id=plc_node_id, node_ip=plc_node_ip, name=plc_node_name, site_id=plc_node_site_id, site=plc_node_site_name, node_type=plc_node_type, node_os=plc_node_os, node_python=plc_node_python, node_as=plc_node_as)
+		plc_node = PLCNode(id=plc_node_id, node_ip=plc_node_ip, name=plc_node_name, zone=plc_node_zone, region=plc_node_region, site_id=plc_node_site_id, site=plc_node_site_name, node_type=plc_node_type, node_os=plc_node_os, node_python=plc_node_python, node_as=plc_node_as)
 		plc_node.save()
 		#print("Successfully save the node!")
 	elif request.method == "GET":
@@ -96,6 +99,30 @@ def node_detail(request, node_id):
 		raise Http404
 	return render(request, 'hello/node_detail.html', {'plc_node' : plc_node})
 
+def get_coordinates(request):
+	# Create the HttpResponse object with the appropriate CSV header
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="coordinates.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['ID', 'Name', 'Latitude', 'Longitude'])
+
+	for site in PLCSite.objects.all():
+		writer.writerow([site.id, site.site_name, site.site_latitude, site.site_longitude])
+	return response
+
+def get_node_csv(request):
+	# Create the HttpResponse object with the appropriate CSV header
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="nodes.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['ID', 'Name', 'Site_ID', 'Site', 'IP', 'Google Zone', 'Google Region'])
+
+	for node in PLCNode.objects.all():
+		writer.writerow([node.id, node.name, node.site_id, node.site, node.node_ip, node.zone, node.region])
+	return response
+
 def map(request):
 	plc_sites = PLCSite.objects.all()
 	for site in plc_sites:
@@ -105,6 +132,6 @@ def map(request):
 		geo_obj = GeoSite(geom=geom)
 		geo_obj.save()
 	#	print("Save coordinates for site: %s", site.site_name)
-	#gsites = GeoJSONSerializer().serialize(GeoSite.objects.all(), use_natural_keys=True)
+	#gsites = GeoJS`ONSerializer().serialize(GeoSite.objects.all(), use_natural_keys=True)
 	gsites = GeoSite.objects.all()
 	return render(request, 'hello/map.html', {'geo_sites':gsites})
