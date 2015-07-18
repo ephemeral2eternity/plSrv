@@ -3,7 +3,7 @@ from django.contrib import admin
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'cmu_agens.views.home', name='home'),
+    url(r'^$', include('home.urls'), name='home'),
     url(r'^hello/', include('hello.urls', namespace='hello')),
     url(r'^overlay/', include('overlay.urls', namespace='overlay')),
     url(r'^ping/', include('ping.urls', namespace='ping')),
