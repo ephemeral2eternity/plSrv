@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from hello import views
+from home import views
 #from djgeojson.views import GeoJSONLayerView
 
 urlpatterns = patterns('', 
