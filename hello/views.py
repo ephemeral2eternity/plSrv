@@ -3,6 +3,7 @@ from django.http import Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.template import RequestContext, loader
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
 import subprocess
 import csv
 from hello.models import PLCSite, PLCNode, GeoSite
@@ -14,7 +15,8 @@ from django.core.serializers import serialize
 
 # Create your views here.
 def index(request):
-	return HttpResponse("Please come back later!")
+#	return HttpResponse("Please come back later!")
+	return render_to_response("hello/index.html")
 
 @csrf_exempt
 def addnode(request):
