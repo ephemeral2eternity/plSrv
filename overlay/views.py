@@ -1,9 +1,12 @@
 from django.shortcuts import render
+from django.shortcuts import render_to_response
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.template import RequestContext, loader
 from django.http import HttpResponse
+from django.http import JsonResponse
 import requests
+import urllib
 import json
 import re
 from overlay.models import Node, Edge
@@ -89,3 +92,37 @@ def zone(request):
 	response = HttpResponse(str(node_zones))
 	response['Params'] = json.dumps(node_zones)
 	return response
+
+# Show the overlay graph in D3.js
+def graph(request):
+	return render_to_response("overlay/graph.html")
+
+# Providing the D3.js JSON file from database in /overlay/graph/ request
+def overlay_json(request):
+	# Nodes should be sorted according to IDs.
+	nodes = Node.objects.all().order_by('pk')
+	zones = Node.objects.values_list('zone', flat=True).distinct()
+	graph = {}
+	nodes_json = []
+	edges_json = []
+	# Changing zone names to categorical numbers
+	for node in nodes:
+		cur_node_json = {}
+		cur_node_json["name"] = node.name
+		cur_node_json["group"] = sorted(zones).index(node.zone)
+		nodes_json.append(cur_node_json)
+	# Update edges according to edges_json
+	edges = Edge.objects.all()
+	for edge in edges:
+		# Update edge's source and dst as node IDs.
+		src, dst = divmod(edge.id, 1000)
+		cur_edge = {}
+		cur_edge["source"] = src - 1
+		cur_edge["target"] = dst - 1
+		cur_edge["value"] = 5
+		edges_json.append(cur_edge)
+	# Return nodes and edges as values
+	graph["nodes"] = nodes_json
+	graph["links"] = edges_json
+	return JsonResponse(graph, safe=False)
+	# return graph
