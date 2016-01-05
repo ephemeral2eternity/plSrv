@@ -36,13 +36,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.markup',
+#    'django.contrib.markup',
+    'markup_deprecated',
     'home',
     'hello',
     'overlay',
     'ping',
     'cacheagent',
-    'djgeojson',
+#    'djgeojson',
     'leaflet',
 )
 

@@ -1,6 +1,6 @@
 from django.db import models
 from decimal import Decimal
-from djgeojson.fields import PointField
+# from djgeojson.fields import PointField
 #from django.contrib.gis.db import models as gismodels
 
 # Create your models here.
@@ -29,5 +29,5 @@ class PLCNode(models.Model):
 		return self.name
 
 # Create GeoSite class to show site coordinates in a map
-class GeoSite(models.Model):
-	geom = PointField()
+# class GeoSite(models.Model):
+#	geom = PointField()

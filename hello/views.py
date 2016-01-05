@@ -6,8 +6,8 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 import subprocess
 import csv
-from hello.models import PLCSite, PLCNode, GeoSite
-from djgeojson.fields import PointField
+from hello.models import PLCSite, PLCNode
+# from djgeojson.fields import PointField
 #from djgeojson.serializers import Serializer as GeoJSONSerializer
 from django.core.serializers import serialize
 #from hello.models import PLCSite, GeoSite
@@ -125,6 +125,7 @@ def get_node_csv(request):
 		writer.writerow([node.id, node.name, node.site_id, node.site, node.node_ip, node.zone, node.region])
 	return response
 
+'''
 def map(request):
 	plc_sites = PLCSite.objects.all()
 	for site in plc_sites:
@@ -137,3 +138,4 @@ def map(request):
 	#gsites = GeoJS`ONSerializer().serialize(GeoSite.objects.all(), use_natural_keys=True)
 	gsites = GeoSite.objects.all()
 	return render(request, 'hello/map.html', {'geo_sites':gsites})
+'''
