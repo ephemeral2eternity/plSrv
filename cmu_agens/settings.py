@@ -22,7 +22,6 @@ SECRET_KEY = 'e^&@ihw6k!ne$ujt-uit6=0n*f2nwl0^1v%qu_&7r-uj20k_*p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -57,6 +56,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+
 ROOT_URLCONF = 'cmu_agens.urls'
 
 WSGI_APPLICATION = 'cmu_agens.wsgi.application'
@@ -71,6 +71,23 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+	},
+        'TEMPLATE_DEBUG': True,
+    },
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
