@@ -12,45 +12,6 @@ import re
 from overlay.models import Node, Edge
 from overlay.lib.get_cache_agents import *
 
-# Create your views here.
-def index(request):
-	## Delete all exisitng nodes and rescan available nodes
-	existing_nodes = Node.objects.all()
-	existing_nodes.delete()
-	gce_nodes = get_cache_agents()
-	node_ips = get_cache_agent_ips()
-	prev_edges = Edge.objects.all()
-	prev_edges.delete()
-	for n in gce_nodes:
-		node_id = int(n['name'].split('-')[1])
-		node_name = n['name']
-		node_ip = n['ip']
-		try:
-			r = requests.get("http://" + node_ip + ":8615/overlay/query/")
-			peer_str = r.headers['agens-peers']
-			print(peer_str)
-			if peer_str:
-				peers = peer_str.split(',')
-				for peer in peers:
-					peer_id = int(peer.split('-')[1])
-					print("(", node_id, ", ", peer_id, ")")
-					if node_id < peer_id:
-						edge_id = node_id * 1000 + peer_id
-						print(edge_id)
-						edge = Edge(id=edge_id, src=node_name, dst=peer)
-					else:
-						edge_id = peer_id * 1000 + node_id
-						print(edge_id)
-						edge = Edge(id=edge_id, src=peer, dst=node_name)
-					edge.save()
-			node_zone = n['zone']
-			node_type = n['type']
-			node = Node(id=node_id, name=node_name, ip=node_ip, zone=node_zone, type=node_type)
-			node.save()
-		except:
-			pass
-	return query(request)
-
 @csrf_exempt
 def query(request):
 	nodes = Node.objects.all()
@@ -67,7 +28,8 @@ def query(request):
 	response['Params'] = json.dumps(node_ips)
 	return response
 
-def edge(request):
+
+def get_edges(request):
 	print("Entering edge function in overlay/views.py")
 	edges = Edge.objects.all()
 	edge_num = edges.count()
@@ -75,7 +37,7 @@ def edge(request):
 	context = RequestContext(request, {'edges':edges, 'edge_num':edge_num})
 	return HttpResponse(template.render(context))
 
-def node(request):
+def get_nodes(request):
 	nodes = Node.objects.all()
 	node_ips = {}
 	for node in nodes:
@@ -84,7 +46,7 @@ def node(request):
 	response['Params'] = json.dumps(node_ips)
 	return response
 
-def zone(request):
+def get_zones(request):
 	nodes = Node.objects.all()
 	node_zones = {}
 	for node in nodes:
@@ -126,3 +88,47 @@ def overlay_json(request):
 	graph["links"] = edges_json
 	return JsonResponse(graph, safe=False)
 	# return graph
+
+# Create your views here.
+def initNodes(request):
+	## Delete all exisitng nodes and rescan available nodes
+	existing_nodes = Node.objects.all()
+	existing_nodes.delete()
+	gce_nodes = get_cache_agents()
+	for n in gce_nodes:
+		node_id = int(n['name'].split('-')[1])
+		node_name = n['name']
+		node_ip = n['ip']
+		node_zone = n['zone']
+		node_type = n['type']
+		node = Node(id=node_id, name=node_name, ip=node_ip, zone=node_zone, type=node_type)
+		node.save()
+	return get_nodes(request)
+
+def initEdges(request):
+	prev_edges = Edge.objects.all()
+	prev_edges.delete()
+	gce_nodes = Node.objects.all()
+	for node in gce_nodes:
+		node_ip = node.ip
+		try:
+			r = requests.get("http://" + node_ip + ":8615/overlay/query/")
+			peer_str = r.headers['agens-peers']
+			print(peer_str)
+			if peer_str:
+				peers = peer_str.split(',')
+				for peer in peers:
+					peer_id = int(peer.split('-')[1])
+					print("(", node_id, ", ", peer_id, ")")
+					if node_id < peer_id:
+						edge_id = node_id * 1000 + peer_id
+						print(edge_id)
+						edge = Edge(id=edge_id, src=node_name, dst=peer)
+					else:
+						edge_id = peer_id * 1000 + node_id
+						print(edge_id)
+						edge = Edge(id=edge_id, src=peer, dst=node_name)
+					edge.save()
+		except:
+			pass
+	return get_edges(request)

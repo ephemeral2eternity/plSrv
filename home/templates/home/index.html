@@ -11,12 +11,13 @@
 <h2>All Video Server's Information</h2>
 <p>All video servers' agents are running on default port: 8615 (control plane). Following apps only discover cache agents running on port 8615! The default video streaming port is 80 (data plane).</p>
 <ul>
-	<li><a href="/overlay/">Centralized Overlay Contructor: construct the overlay network of all video servers deployed in Google Cloud that run cache agents on port 8615.</a></li>
+	<li><a href="/overlay/initNodes/">Obtain all video servers deployed in Google Cloud that run cache agents on port 8615.</a></li>
+	<li><a href="/overlay/initEdges/">Construct the cache agent overlay network for all video servers.</a></li>
 	<li><a href="/overlay/query/">Overlay Query: query the existing overlay network of video servers</a></li>
-	<li><a href="/overlay/edge/">Overlay Query: show the edges in the cache agent overlay network</a></li>
 	<li><a href="/overlay/node/">Overlay Query: show the node info in the cache agent overlay network</li>
+	<li><a href="/overlay/edge/">Overlay Query: show the edges in the cache agent overlay network</a></li>
+	<li><a href="/overlay/zone/">Overlay Query: show all the node's datacenter zones</a></li>
 	<li><a href="/overlay/graph/">Overlay Graph: show the overlay graph plotted in D3.js</li>
-	<li><a href="/overlay/node/">Overlay Query: show all the node's datacenter zones</a></li>
 </ul>
 <h2>The closest cache agent for recent clients</h2>
 <p>Whenever a client request comes to the VoD system, it will be served by the closest cache agent (redirector) in the system. Following operations are REST API for showing, adding, deleting, or dumping such information</p>
