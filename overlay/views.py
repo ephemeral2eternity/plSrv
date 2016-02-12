@@ -33,9 +33,9 @@ def get_edges(request):
 	print("Entering edge function in overlay/views.py")
 	edges = Edge.objects.all()
 	edge_num = edges.count()
+	print("There are " + str(edge_num) + " edges in the database to show!")
 	template = loader.get_template('overlay/edges.html')
-	context = RequestContext(request, {'edges':edges, 'edge_num':edge_num})
-	return HttpResponse(template.render(context))
+	return HttpResponse(template.render({'edges':edges, 'edge_num':edge_num}, request))
 
 def get_nodes(request):
 	nodes = Node.objects.all()
@@ -110,25 +110,43 @@ def initEdges(request):
 	prev_edges.delete()
 	gce_nodes = Node.objects.all()
 	for node in gce_nodes:
+		node_id = node.id
 		node_ip = node.ip
+		node_name = node.name
+		print("Obtaining peers for cache agent:" + node_name)
 		try:
 			r = requests.get("http://" + node_ip + ":8615/overlay/query/")
 			peer_str = r.headers['agens-peers']
-			print(peer_str)
 			if peer_str:
 				peers = peer_str.split(',')
+				print(peers)
 				for peer in peers:
+					print(peer)
 					peer_id = int(peer.split('-')[1])
-					print("(", node_id, ", ", peer_id, ")")
 					if node_id < peer_id:
+						print("(", node_id, ", ", peer_id, ")")
 						edge_id = node_id * 1000 + peer_id
 						print(edge_id)
+						print("Saving overlay egde from node:" + node_name + " to peer:" + peer)
 						edge = Edge(id=edge_id, src=node_name, dst=peer)
 					else:
+						print("(", peer_id, ", ", node_id, ")")
 						edge_id = peer_id * 1000 + node_id
 						print(edge_id)
+						print("Saving overlay egde from node:" + node_name + " to peer:" + peer)
 						edge = Edge(id=edge_id, src=peer, dst=node_name)
+					print("Saving edge to database")
 					edge.save()
 		except:
 			pass
 	return get_edges(request)
+
+def initManager(request):
+	init_rsts = {}
+	nodes = Node.objects.all()
+	for n in nodes:
+		node_name = n['name']
+		node_ip = n['ip']
+		isSuccess = init_manager(node_ip)
+		init_rsts[node_name] = isSuccess
+	return JsonResponse(init_rsts, safe=False)
