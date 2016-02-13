@@ -1,0 +1,15 @@
+<h1> Show the user demand based content caching </h1>
+{% if caches %}
+<table style="width:90%">
+	<tr>
+		<td>Server</td>
+		<td>Cached Video IDs</td>
+	</tr>
+	<tr>
+		<td> {{cache.server}} </td>
+		<td> {{cache.videos}} </td>
+	</tr>
+</table>
+{% else %}
+	<p>Please run the init command to initialize the content placement!</p>
+{% endif %}

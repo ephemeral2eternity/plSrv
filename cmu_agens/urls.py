@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^overlay/', include('overlay.urls', namespace='overlay')),
     url(r'^ping/', include('ping.urls', namespace='ping')),
     url(r'^cacheagent/', include('cacheagent.urls', namespace='cacheagent')),
+    url(r'^video/', include('video.urls', namespace='video')),
     url(r'^admin/', include(admin.site.urls)),
 ]

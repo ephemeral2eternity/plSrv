@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'overlay',
     'ping',
     'cacheagent',
+    'video',
 #    'djgeojson',
     'leaflet',
 )

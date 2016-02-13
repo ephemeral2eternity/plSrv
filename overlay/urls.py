@@ -3,6 +3,7 @@ from overlay import views
 #from djgeojson.views import GeoJSONLayerView
 
 urlpatterns = [ 
+	url(r'^initManager/$', views.initManager, name='initManager'),
 	url(r'^initNodes/$', views.initNodes, name='initNodes'),
 	url(r'^initEdges/$', views.initEdges, name='initEdges'),
 	url(r'^query/$', views.query, name='query'),
