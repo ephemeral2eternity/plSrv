@@ -7,6 +7,10 @@ class Node(models.Model):
 	zone = models.CharField(max_length=20, default="")
 	type = models.CharField(max_length=50, default="f1-micro")
 
+class OverlayNode(models.Model):
+	name = models.CharField(max_length=10)
+	ip = models.CharField(max_length=10)
+
 class Edge(models.Model):
 	src = models.CharField(max_length=10)
 	dst = models.CharField(max_length=10)

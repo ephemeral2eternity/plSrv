@@ -30,16 +30,23 @@ def init_content_caching(request):
 		zipfParam = float(request_dict['zipfParam'][0])
 	else:
 		zipfParam = 0.1
+	existing_caches = Cache.objects.all()
+	if existing_caches.count() > 0:
+		existing_caches.delete()
 	content_caching = initialize_content_caching(videoNum, zipfParam, minCopy)
-	#for srv in content_caching.keys():
-	#	cached_videos = 
-	# return query(request)
-	response = HttpResponse(str(content_caching))
-	response['Params'] = json.dumps(content_caching)
-	return response
-	
+	for srv in content_caching.keys():
+		cached_videos = content_caching[srv]
+		cached_videos_str = ', '.join(str(video_id) for video_id in cached_videos)
+		newCache = Cache(server=srv, videos=cached_videos_str)
+		newCache.save()
+	return query(request)
 
 def query(request):
 	caches = Cache.objects.all()
+	content_caching = {}
+	for cache in caches:
+		content_caching[cache.server] = cache.videos
 	templates = loader.get_template('video/caches.html')
-	return HttpResponse(templates.render({'caches':caches}, request))
+	response =  HttpResponse(templates.render({'caches':caches}, request))
+	response['Params'] = json.dumps(content_caching)
+	return response

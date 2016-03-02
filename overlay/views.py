@@ -9,7 +9,7 @@ import requests
 import urllib
 import json
 import re
-from overlay.models import Node, Edge
+from overlay.models import OverlayNode, Node, Edge
 from overlay.lib.get_cache_agents import *
 
 @csrf_exempt
@@ -42,6 +42,16 @@ def get_nodes(request):
 	node_ips = {}
 	for node in nodes:
 		node_ips[node.name] = node.ip
+	response = HttpResponse(str(node_ips))
+	response['Params'] = json.dumps(node_ips)
+	return response
+
+def get_overlay_nodes(request):
+	overlay_nodes = OverlayNode.objects.all()
+	node_ips = {}
+	for node in overlay_nodes:
+		node_ips[node.name] = node.ip
+	print("Respond with updated overlay nodes: " + str(node_ips))
 	response = HttpResponse(str(node_ips))
 	response['Params'] = json.dumps(node_ips)
 	return response
@@ -89,6 +99,40 @@ def overlay_json(request):
 	return JsonResponse(graph, safe=False)
 	# return graph
 
+# Add a node to the overlay network
+def add(request):
+	print("Entering overlay/add() function!")
+	url = request.get_full_path()
+	params = url.split('?')[1]
+	to_add_dict = urllib.parse.parse_qs(params)
+	print("Entering overlay/add() function to add " + params)
+	if 'src' in to_add_dict.keys():
+		src_name = to_add_dict['src'][0]
+		if Node.objects.filter(name=src_name).exists() and (not OverlayNode.objects.filter(name=src_name).exists()):
+			node_to_add = Node.objects.get(name=src_name)
+			new_overlay_node = OverlayNode(name=node_to_add.name, ip=node_to_add.ip)
+			new_overlay_node.save()
+		if 'dst' in to_add_dict.keys():
+			dst_name = to_add_dict['dst'][0]
+			if Node.objects.filter(name=dst_name).exists():
+				src_id = int(src_name.split('-')[1])
+				dst_id = int(dst_name.split('-')[1])
+				if src_id < dst_id:
+					print("(", src_id, ", ", dst_id, ")")
+					edge_id = src_id * 1000 + dst_id
+					print(edge_id)
+					print("Saving overlay egde from node:" + src_name + " to node:" + dst_name)
+					edge = Edge(id=edge_id, src=node_name, dst=peer)
+				else:
+					print("(", dst_id, ", ", src_id, ")")
+					edge_id = dst_id * 1000 + src_id
+					print(edge_id)
+					print("Saving overlay egde from node:" + dst_name + " to peer:" + src_name)
+					edge = Edge(id=edge_id, src=dst_name, dst=src_name)
+				edge.save()
+	return get_edges(request)	
+
+
 # Create your views here.
 def initNodes(request):
 	## Delete all exisitng nodes and rescan available nodes
@@ -105,7 +149,7 @@ def initNodes(request):
 		node.save()
 	return get_nodes(request)
 
-def initEdges(request):
+def queryOverlay(request):
 	prev_edges = Edge.objects.all()
 	prev_edges.delete()
 	gce_nodes = Node.objects.all()
@@ -141,12 +185,49 @@ def initEdges(request):
 			pass
 	return get_edges(request)
 
+
+def initOverlay(request):
+	print("Deleting the previous overlay nodes and edges!")
+	prev_edges = Edge.objects.all()
+	prev_edges.delete()
+	prev_overlay_nodes = OverlayNode.objects.all()
+	prev_overlay_nodes.delete()
+	all_nodes = Node.objects.all()
+	for node in all_nodes:
+		node_name = node.name 
+		node_ip = node.ip
+		init_url = "http://%s:8615/overlay/init/"%node_ip
+		connect_url = "http://%s:8615/overlay/connect/"%node_ip
+		try:
+			print("sending initialization request to " + node_name)
+			r = requests.get(init_url)
+			print(r)
+		except:
+			pass
+		try:
+			print("sending connect request to " + node_name)
+			r = requests.get(connect_url)
+			print(r)
+		except:
+			pass
+	return get_edges(request)
+
+
+def deleteOverlay(request):
+	print("Deleting the previous overlay nodes and edges!")
+	prev_edges = Edge.objects.all()
+	prev_edges.delete()
+	prev_overlay_nodes = OverlayNode.objects.all()
+	prev_overlay_nodes.delete()
+	return HttpResponse("Successfully delete the previous overlay network!")
+	
+
 def initManager(request):
 	init_rsts = {}
 	nodes = Node.objects.all()
 	for n in nodes:
-		node_name = n['name']
-		node_ip = n['ip']
+		node_name = n.name
+		node_ip = n.ip
 		isSuccess = init_manager(node_ip)
 		init_rsts[node_name] = isSuccess
 	return JsonResponse(init_rsts, safe=False)
